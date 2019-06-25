@@ -1,22 +1,27 @@
-import java.net.*;  
+import java.net.*;
 import java.io.*;
-public class Live_Chat { 
-	public static void main(String[] args) throws IOException{ 
-		try {
-			String serverSentence;
-			String messageFromClient;
-			ServerSocket welcomeSocket = new ServerSocket(6789);
-			Socket connectionSocket = welcomeSocket.accept();
-			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-			serverSentence = "Hello World";
-			outToClient.writeBytes("server: " + serverSentence + '\n');
-			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-			while(!(messageFromClient = inFromClient.readLine()).equals("end")) {
-				System.out.println(messageFromClient);
+public class Live_Chat {
+	public static void main (String args[]) throws IOException {
+		ServerSocket listen = new ServerSocket(6789);
+		while(true) { // non-terminating server
+			Socket socket = listen.accept();
+			BufferedReader in = new BufferedReader(
+			new InputStreamReader(
+			socket.getInputStream()));
+			PrintStream out = new PrintStream(socket.getOutputStream());
+			while (true) { // end of input stream will close dialogue
+				String message = in.readLine();
+				if(message==null) {
+					System.out.println("Socket closed.");
+					break;
+				}
+				String answer = message.replace('i','o');
+				out.println(answer);
 			}
-			welcomeSocket.close();
-		} catch (IOException e) {
-			System.out.println("User signed off");
+			in.close();
+			out.close();
+			listen.close();
+			socket.close(); // close connection
 		}
-	} 
-} 
+	}
+}
