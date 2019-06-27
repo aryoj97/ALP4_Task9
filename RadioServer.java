@@ -15,23 +15,26 @@ public class RadioServer{
     Service(Socket s){
       socket = s;
     }
+    @Override
     public void run() {
       try {
         File soundfile = new File("./sound.wav");
+        while (true) {
         AudioInputStream ais = AudioSystem.getAudioInputStream(soundfile);
 
-        InputStream in = socket.getInputStream(); //creates input stream, data server receives
-        OutputStream out= socket.getOutputStream(); //creates output stream,data server sends
-        FileInputStream stream = new FileInputStream(soundfile);
+        OutputStream out = socket.getOutputStream();
 
-        byte[] buffer= new byte[4096];
+        FileInputStream in = new FileInputStream(soundfile);
 
-        Clip clip = AudioSystem.getClip();
-        clip.open(ais);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        Thread.sleep(10000); //looping as long as this thread is alive
+        byte buffer[] = new byte[2048];
+        int length = 2048;
+          while ((in.read(buffer,0,2048)) != -1) {
+              out.write(buffer, 0, 2048);
+          }
+        }
 
-        stream.close(); out.close();	// ready to accept new client
+
+        // out.close();	// ready to accept new client
       } catch (IOException e) {
         System.out.println(e);
       } catch (Exception e) {
