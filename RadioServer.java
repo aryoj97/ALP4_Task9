@@ -19,22 +19,17 @@ public class RadioServer{
     public void run() {
       try {
         File soundfile = new File("./sound.wav");
-        while (true) {
-        AudioInputStream ais = AudioSystem.getAudioInputStream(soundfile);
-
-        OutputStream out = socket.getOutputStream();
-
-        FileInputStream in = new FileInputStream(soundfile);
-
-        byte buffer[] = new byte[2048];
         int length = 2048;
-          while ((in.read(buffer,0,2048)) != -1) {
-              out.write(buffer, 0, 2048);
+        while (true) {
+          OutputStream out = socket.getOutputStream();
+
+          FileInputStream in = new FileInputStream(soundfile);
+
+          byte buffer[] = new byte[length];
+          while ((in.read(buffer,0,length)) != -1) {
+              out.write(buffer, 0, length);
           }
         }
-
-
-        // out.close();	// ready to accept new client
       } catch (IOException e) {
         System.out.println(e);
       } catch (Exception e) {
